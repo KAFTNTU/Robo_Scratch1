@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -141,15 +142,18 @@
             #quadLayout{ transform: translateY(var(--quad-layout-shift-mobile)); }
         }
 
-        #blocklyDiv { 
-            position: absolute; 
-            top: 64px; 
-            left: 0; 
-            right: 0; 
-            bottom: 0px; 
-            background-color: #0f172a !important; 
-            z-index: 1;
-        }
+        #blocklyDiv {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    background-color: var(--ui-glass) !important;
+    z-index: 1;
+}
+/* Make Blockly background transparent so the DIV background shows, but KEEP the grid pattern fill. */
+.blocklySvg { background-color: transparent !important; }
         
         .blocklySvg { background-color: transparent !important; }
 
@@ -949,15 +953,7 @@ select, option{
             <button onclick="switchView('view-builder', this)" class="nav-btn" title="Scratch">
                 <i class="fa-solid fa-puzzle-piece text-lg"></i>
             </button>
-<button onclick="startDualMode(this)" class="nav-btn text-slate-400 hover:text-slate-300" title="4 Джойстики">
-                <div class="grid grid-cols-2 gap-0.5" style="width: 18px; height: 18px;">
-                    <div class="bg-current rounded-full opacity-70"></div>
-                    <div class="bg-current rounded-full opacity-70"></div>
-                    <div class="bg-current rounded-full opacity-70"></div>
-                    <div class="bg-current rounded-full opacity-70"></div>
-                </div>
-            </button>
-            <div class="w-px h-6 bg-slate-700 mx-1"></div>
+<div class="w-px h-6 bg-slate-700 mx-1"></div>
             <button onclick="openPassModal()" class="nav-btn text-slate-400 hover:text-slate-300" title="Пароль">
                 <i class="fa-solid fa-lock text-lg"></i>
             </button>
@@ -1018,7 +1014,7 @@ select, option{
                 </button>
 
                 <div class="bg-black/40px-3 py-1 rounded text-[10px] font-mono tracking-widest text-slate-400 border border-slate-800/50 text-center mt-2">
-                    HEX: <span id="joyHex" class="text-yellow-500 font-bold">00 00 00 00</span>
+                    HEX: <span id="joyHex" class="text-yellow-500 font-bold">00 00</span>
                 </div>
             </div>
             </div>
@@ -1057,55 +1053,7 @@ select, option{
             </div>
 <div id="blocklyDiv" class="flex-1 mt-0"></div>
         </section>
-
-        <section id="view-dual" class="absolute inset-0 hidden opacity-0 flex flex-col items-center justify-center bg-slate-950">
-                        <div id="quadLayout" class="w-full h-full flex flex-col items-center justify-center">
-                <div class="flex items-start justify-center gap-12">
-<div class="joy-quad-wrapper">
-                    <div>
-                        <div class="joy-quad-label">M1</div>
-                        <div id="joy1-container" class="joy-quad-container">
-                            <div id="joy1-base" class="joy-quad-base">
-                                <div id="joy1-stick" class="joy-quad-stick snap"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="joy-quad-label">M3</div>
-                        <div id="joy3-container" class="joy-quad-container">
-                            <div id="joy3-base" class="joy-quad-base">
-                                <div id="joy3-stick" class="joy-quad-stick snap"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="joy-quad-wrapper">
-                    <div>
-                        <div class="joy-quad-label">M2</div>
-                        <div id="joy2-container" class="joy-quad-container">
-                            <div id="joy2-base" class="joy-quad-base">
-                                <div id="joy2-stick" class="joy-quad-stick snap"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="joy-quad-label">M4</div>
-                        <div id="joy4-container" class="joy-quad-container">
-                            <div id="joy4-base" class="joy-quad-base">
-                                <div id="joy4-stick" class="joy-quad-stick snap"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </div>
-
-                <div class="mt-6 bg-black/80 px-6 py-2 rounded-full text-xs font-mono text-purple-400 border border-slate-700 shadow-lg z-20">
-                    HEX: <span id="quadPacketHex">--</span>
-                </div>
-            </div>
-        </section>
-    </main>
+</main>
 
     <div id="exampleModal" class="fixed inset-0 bg-black/80 z-[70] hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-slate-900 w-full max-w-sm rounded-2xl shadow-2xl border border-slate-700 p-5 overflow-y-auto max-h-[90vh]">
@@ -1157,68 +1105,7 @@ select, option{
             <h3 class="text-lg font-bold text-white mb-4 text-center">⚙️ Налаштування шасі</h3>
             
             <div class="space-y-4">
-<div class="bg-fuchsia-900/20 p-3 rounded-xl border border-fuchsia-500/30">
-                    <div class="flex items-center justify-between gap-3">
-                        <div>
-                            <div class="text-sm text-fuchsia-300 font-bold"><i class="fa-solid fa-robot mr-2"></i>Режим робота</div>
-                            <div class="text-[11px] text-slate-400 mt-1">🚗 Машинка: 2 байти (L/R) · 🕷️ Павук: 8 байт (H/V 1..4)</div>
-                        </div>
-                        <select id="robotModeSelect" class="bg-slate-950 border border-slate-700 text-white text-xs rounded-lg px-2 py-2" onchange="saveTuning();">
-                            <option value="car">🚗 Машинка</option>
-                            <option value="spider">🕷️ Павук</option>
-                        </select>
-                    </div>
-
-                    <div id="spiderTuningBox" class="mt-3 hidden">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-black/30 p-2 rounded-lg border border-white/5">
-                                <div class="text-[10px] text-slate-400 mb-1">V ВГОРУ</div>
-                                <input type="range" id="spVup" min="0" max="180" step="1">
-                                <div class="text-[10px] text-blue-300 font-mono text-center" id="spVupVal">60</div>
-                            </div>
-                            <div class="bg-black/30 p-2 rounded-lg border border-white/5">
-                                <div class="text-[10px] text-slate-400 mb-1">V ВНИЗ</div>
-                                <input type="range" id="spVdown" min="0" max="180" step="1">
-                                <div class="text-[10px] text-blue-300 font-mono text-center" id="spVdownVal">90</div>
-                            </div>
-
-                            <div class="bg-black/30 p-2 rounded-lg border border-white/5">
-                                <div class="text-[10px] text-slate-400 mb-1">H ЛІВО</div>
-                                <input type="range" id="spHleft" min="0" max="180" step="1">
-                                <div class="text-[10px] text-blue-300 font-mono text-center" id="spHleftVal">60</div>
-                            </div>
-                            <div class="bg-black/30 p-2 rounded-lg border border-white/5">
-                                <div class="text-[10px] text-slate-400 mb-1">H ПРАВО</div>
-                                <input type="range" id="spHright" min="0" max="180" step="1">
-                                <div class="text-[10px] text-blue-300 font-mono text-center" id="spHrightVal">120</div>
-                            </div>
-
-                            <div class="bg-black/30 p-2 rounded-lg border border-white/5">
-                                <div class="text-[10px] text-slate-400 mb-1">АМПЛІТУДА КРОКУ (°)</div>
-                                <input type="range" id="spAmp" min="0" max="30" step="1">
-                                <div class="text-[10px] text-blue-300 font-mono text-center" id="spAmpVal">15</div>
-                            </div>
-                            <div class="bg-black/30 p-2 rounded-lg border border-white/5">
-                                <div class="text-[10px] text-slate-400 mb-1">МЕРТВА ЗОНА</div>
-                                <input type="range" id="spDead" min="0" max="25" step="1">
-                                <div class="text-[10px] text-blue-300 font-mono text-center" id="spDeadVal">8</div>
-                            </div>
-
-                            <div class="bg-black/30 p-2 rounded-lg border border-white/5">
-                                <div class="text-[10px] text-slate-400 mb-1">БАЗА (Гц)</div>
-                                <input type="range" id="spBaseHz" min="0.1" max="2.5" step="0.1">
-                                <div class="text-[10px] text-blue-300 font-mono text-center" id="spBaseHzVal">0.9</div>
-                            </div>
-                            <div class="bg-black/30 p-2 rounded-lg border border-white/5">
-                                <div class="text-[10px] text-slate-400 mb-1">K (Гц)</div>
-                                <input type="range" id="spKHz" min="0" max="4" step="0.1">
-                                <div class="text-[10px] text-blue-300 font-mono text-center" id="spKHzVal">1.6</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
+<div class="space-y-2">
                     <span class="text-xs text-slate-400 uppercase tracking-widest font-bold">Інверсія моторів</span>
                     <div class="flex gap-2">
                         <input type="checkbox" id="invLCheck" class="btn-check-input" onchange="saveTuning()">
@@ -1289,36 +1176,7 @@ select, option{
     </div>
 
     <xml id="toolbox" style="display: none">
-        <category name="🕷️ Павук" colour="#A855F7">
-             <block type="spider_center"></block>
-             <block type="spider_step">
-                 <field name="DIR">FWD</field>
-             </block>
-             <block type="spider_walk_while">
-                <field name="DIR">FWD</field>
-             </block>
-             <block type="spider_walk_time">
-                <field name="DIR">FWD</field>
-                <value name="SEC"><shadow type="math_number"><field name="NUM">2</field></shadow></value>
-             </block>
-             <block type="spider_turn_smooth">
-                <value name="ANGLE"><shadow type="math_number"><field name="NUM">90</field></shadow></value>
-             </block>
-             <block type="spider_leg_control">
-                 <value name="VAL"><shadow type="math_number"><field name="NUM">90</field></shadow></value>
-             </block>
-             <block type="spider_config">
-                 <value name="HEIGHT"><shadow type="math_number"><field name="NUM">40</field></shadow></value>
-                 <value name="SPEED"><shadow type="math_number"><field name="NUM">100</field></shadow></value>
-             </block>
-             <block type="spider_anim">
-                 <field name="ANIM">WAVE</field>
-             </block>
-             <block type="spider_joystick_ctrl"></block>
-             <block type="spider_stop"></block>
-        </category>
-
-        <category name="🚗 Рух" colour="#4C97FF">
+<category name="🚗 Рух" colour="#244FA8">
 <block type="start_hat"></block>
     <block type="robot_stop"></block>
     <block type="robot_move">
@@ -1339,17 +1197,9 @@ select, option{
     <block type="motor_single">
         <value name="SPEED"><shadow type="math_number_limited"><field name="NUM">100</field></shadow></value>
     </block>
-    <block type="move_4_motors">
-        <value name="M1"><shadow type="math_number_limited"><field name="NUM">100</field></shadow></value>
-        <value name="M2"><shadow type="math_number_limited"><field name="NUM">100</field></shadow></value>
-        <value name="M3"><shadow type="math_number_limited"><field name="NUM">100</field></shadow></value>
-        <value name="M4"><shadow type="math_number_limited"><field name="NUM">100</field></shadow></value>
-    </block>
-    <block type="go_home"></block>
-    <block type="record_start"></block>
-    <block type="replay_track"></block>
-    <block type="wait_start"></block>
-    <block type="stop_at_start"></block>
+<block type="go_home"></block>
+    <block type="track_action"></block>
+    <block type="start_line_action"></block>
 </category>
         
         <category name="🧠 Логіка" colour="%{BKY_LOGIC_HUE}">
@@ -1379,6 +1229,7 @@ select, option{
     <block type="logic_schmitt"></block>
   </category>
         <category name="Цикли" colour="%{BKY_LOOPS_HUE}">
+            <block type="loop_forever"></block>
             <block type="controls_repeat_ext"><value name="TIMES"><shadow type="math_number"><field name="NUM">4</field></shadow></value></block>
             <block type="loop_repeat_pause">
                 <value name="TIMES"><shadow type="math_number"><field name="NUM">4</field></shadow></value>
@@ -1393,10 +1244,7 @@ select, option{
                 <value name="TO"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
                 <value name="BY"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
             </block>
-            <block type="replay_loop">
-                 <value name="TIMES"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-             </block>
-             <block type="count_laps">
+<block type="count_laps">
                  <value name="LAPS"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
              </block>
         </category>
@@ -1435,7 +1283,7 @@ select, option{
             </block>
             <block type="math_smooth"></block>
         </category>
-        <category name="Контроль" colour="#FFBF00">
+        <category name="Контроль" colour="#B36C0C">
 <block type="calibrate_speed_line">
       <value name="L"><shadow type="math_number"><field name="NUM">50</field></shadow></value>
       <value name="THR"><shadow type="math_number"><field name="NUM">30</field></shadow></value>
@@ -1465,12 +1313,7 @@ select, option{
     <block type="timeout_do_until">
       <value name="SEC"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
     </block>
-    <block type="if_happened_n_times">
-      <value name="TIMES"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
-      <value name="SEC"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-    </block>
-
-    <block type="sensor_display"></block>
+<block type="sensor_display"></block>
     <block type="wait_until_sensor"></block>
     <block type="wait_seconds"></block>
     <block type="timer_get"></block>
@@ -1504,7 +1347,7 @@ select, option{
         let lastJoyX = 0;
         let lastJoyY = 0;
         
-        let tuning = {trim: 0, invertL: false, invertR: false, turnSens: 100, robotMode: 'car', spider: { V_DOWN: 90, V_UP: 60, H_CENTER: 90, H_LEFT: 60, H_RIGHT: 120, stepAmpMax: 15, baseHz: 0.9, kHz: 1.6, deadzone: 8 } };
+        let tuning = {trim: 0, invertL: false, invertR: false, turnSens: 100};
         try {
             const saved = localStorage.getItem('roboTuning_v9');
             if(saved) tuning = { ...tuning, ...JSON.parse(saved) };
@@ -1517,62 +1360,6 @@ select, option{
         document.getElementById('invRCheck').checked = tuning.invertR;
 document.getElementById('turnSensSlider').value = tuning.turnSens;
         document.getElementById('turnSensDisplay').innerText = tuning.turnSens + "%";
-
-        const robotModeSelect = document.getElementById('robotModeSelect');
-        const spiderTuningBox = document.getElementById('spiderTuningBox');
-
-        function applyRobotModeUI() {
-            robotModeSelect.value = tuning.robotMode || 'car';
-            const isSpider = robotModeSelect.value === 'spider';
-            spiderTuningBox.classList.toggle('hidden', !isSpider);
-document.getElementById('invLCheck').disabled = isSpider;
-            document.getElementById('invRCheck').disabled = isSpider;
-        }
-
-        const spEls = {
-            V_UP:   { el: document.getElementById('spVup'),     out: document.getElementById('spVupVal') },
-            V_DOWN: { el: document.getElementById('spVdown'),   out: document.getElementById('spVdownVal') },
-            H_LEFT: { el: document.getElementById('spHleft'),   out: document.getElementById('spHleftVal') },
-            H_RIGHT:{ el: document.getElementById('spHright'),  out: document.getElementById('spHrightVal') },
-            stepAmpMax:{ el: document.getElementById('spAmp'),  out: document.getElementById('spAmpVal') },
-            deadzone:{ el: document.getElementById('spDead'),   out: document.getElementById('spDeadVal') },
-            baseHz:{ el: document.getElementById('spBaseHz'),   out: document.getElementById('spBaseHzVal') },
-            kHz:{ el: document.getElementById('spKHz'),         out: document.getElementById('spKHzVal') },
-        };
-
-        function syncSpiderUIFromTuning() {
-            tuning.spider = tuning.spider || {};
-            const s = tuning.spider;
-            s.V_UP = (s.V_UP ?? 60);
-            s.V_DOWN = (s.V_DOWN ?? 90);
-            s.H_LEFT = (s.H_LEFT ?? 60);
-            s.H_RIGHT = (s.H_RIGHT ?? 120);
-            s.H_CENTER = (s.H_CENTER ?? 90);
-            s.stepAmpMax = (s.stepAmpMax ?? 15);
-            s.deadzone = (s.deadzone ?? 8);
-            s.baseHz = (s.baseHz ?? 0.9);
-            s.kHz = (s.kHz ?? 1.6);
-
-            spEls.V_UP.el.value = s.V_UP; spEls.V_UP.out.innerText = s.V_UP;
-            spEls.V_DOWN.el.value = s.V_DOWN; spEls.V_DOWN.out.innerText = s.V_DOWN;
-            spEls.H_LEFT.el.value = s.H_LEFT; spEls.H_LEFT.out.innerText = s.H_LEFT;
-            spEls.H_RIGHT.el.value = s.H_RIGHT; spEls.H_RIGHT.out.innerText = s.H_RIGHT;
-            spEls.stepAmpMax.el.value = s.stepAmpMax; spEls.stepAmpMax.out.innerText = s.stepAmpMax;
-            spEls.deadzone.el.value = s.deadzone; spEls.deadzone.out.innerText = s.deadzone;
-            spEls.baseHz.el.value = s.baseHz; spEls.baseHz.out.innerText = s.baseHz;
-            spEls.kHz.el.value = s.kHz; spEls.kHz.out.innerText = s.kHz;
-        }
-
-        Object.values(spEls).forEach(({el, out}) => {
-            el.addEventListener('input', () => {
-                out.innerText = el.value;
-                saveTuning();
-            });
-        });
-
-        applyRobotModeUI();
-        syncSpiderUIFromTuning();
-
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
 
@@ -1653,104 +1440,16 @@ document.getElementById('invLCheck').disabled = isSpider;
             tuning.trim = parseInt(document.getElementById('trimSlider').value);
             tuning.invertL = document.getElementById('invLCheck').checked;
             tuning.invertR = document.getElementById('invRCheck').checked;
-tuning.turnSens = parseInt(document.getElementById('turnSensSlider').value);
-            
-            tuning.robotMode = document.getElementById('robotModeSelect').value;
-            tuning.spider = tuning.spider || {};
-            tuning.spider.V_UP = parseInt(document.getElementById('spVup').value);
-            tuning.spider.V_DOWN = parseInt(document.getElementById('spVdown').value);
-            tuning.spider.H_LEFT = parseInt(document.getElementById('spHleft').value);
-            tuning.spider.H_RIGHT = parseInt(document.getElementById('spHright').value);
-            tuning.spider.H_CENTER = 90;
-            tuning.spider.stepAmpMax = parseInt(document.getElementById('spAmp').value);
-            tuning.spider.deadzone = parseInt(document.getElementById('spDead').value);
-            tuning.spider.baseHz = parseFloat(document.getElementById('spBaseHz').value);
-            tuning.spider.kHz = parseFloat(document.getElementById('spKHz').value);
+            tuning.turnSens = parseInt(document.getElementById('turnSensSlider').value);
 
-            if (typeof applyRobotModeUI === 'function') applyRobotModeUI();
-            if (typeof syncSpiderUIFromTuning === 'function') syncSpiderUIFromTuning();
-
-            localStorage.setItem('roboTuning_v9', JSON.stringify(tuning));
-        }
-
-        let _spiderPhase = 0;
-
-        function computeSpiderFromJoystick(x, y) {
-
-            const s = tuning.spider || {};
-            const dead = s.deadzone ?? 8;
-
-            const mag = Math.min(100, Math.sqrt(x*x + y*y));
-            if (mag < dead) {
-                return {
-                    h: [s.H_CENTER ?? 90, s.H_CENTER ?? 90, s.H_CENTER ?? 90, s.H_CENTER ?? 90],
-                    v: [s.V_DOWN ?? 90, s.V_DOWN ?? 90, s.V_DOWN ?? 90, s.V_DOWN ?? 90],
-                    advance: false
-                };
-            }
-
-            let sector = 'UP';
-            if (Math.abs(y) >= Math.abs(x) && y > 0) sector = 'UP';
-            else if (Math.abs(y) >= Math.abs(x) && y < 0) sector = 'DOWN';
-            else if (Math.abs(x) > Math.abs(y) && x > 0) sector = 'RIGHT';
-            else if (Math.abs(x) > Math.abs(y) && x < 0) sector = 'LEFT';
-
-            const H_CENTER = s.H_CENTER ?? 90;
-            const H_LEFT = s.H_LEFT ?? 60;
-            const H_RIGHT = s.H_RIGHT ?? 120;
-
-            let Ht = H_CENTER;
-            if (sector === 'LEFT') Ht = H_LEFT;
-            if (sector === 'RIGHT') Ht = H_RIGHT;
-            if (sector === 'UP') Ht = H_CENTER;
-            if (sector === 'DOWN') Ht = H_CENTER;
-
-            const V_UP = s.V_UP ?? 60;
-            const V_DOWN = s.V_DOWN ?? 90;
-
-            const stepAmpMax = s.stepAmpMax ?? 15;
-            const stepAmp = (mag / 100) * stepAmpMax;
-
-            const dirSign = (sector === 'DOWN') ? -1 : 1;
-
-            const inA = _spiderPhase < 0.5;
-            const lifted = [inA, !inA, inA, !inA];
-
-            const h = [Ht, Ht, Ht, Ht].map((base, i) => {
-                const off = lifted[i] ? +stepAmp : -stepAmp;
-                return Math.max(0, Math.min(180, Math.round(base + dirSign * off)));
-            });
-
-            const v = [0,0,0,0].map((_, i) => lifted[i] ? V_UP : V_DOWN);
-
-            return { h, v, advance: true, mag };
+            try { localStorage.setItem('roboTuning_v9', JSON.stringify(tuning)); } catch(e) {}
         }
 
         setInterval(() => {
             if (!isConnected) return;
 
             if (activeView === 'view-joystick') {
-                if ((tuning.robotMode || 'car') === 'spider') {
-                    const x = lastJoyX;
-                    const y = lastJoyY;
-
-                    const dt = 0.1;
-                    const mag = Math.min(100, Math.sqrt(x*x + y*y));
-                    const s = tuning.spider || {};
-                    const dead = s.deadzone ?? 8;
-
-                    if (mag >= dead) {
-                        const baseHz = s.baseHz ?? 0.9;
-                        const kHz = s.kHz ?? 1.6;
-                        const hz = baseHz + (kHz * (mag / 100));
-                        _spiderPhase = (_spiderPhase + dt * hz) % 1;
-                    }
-
-                    const out = computeSpiderFromJoystick(x, y);
-                    sendSpiderPacket(out.h[0], out.v[0], out.h[1], out.v[1], out.h[2], out.v[2], out.h[3], out.v[3]);
-                } else {
-                    sendCarPacket(currentL, currentR);
-                }
+                sendCarPacket(currentL, currentR);
             }
         }, 100);
 const SLIP_END = 0xC0;
@@ -1825,16 +1524,7 @@ const SLIP_END = 0xC0;
         }
 
 
-        async function sendSpiderPacket(h1, v1, h2, v2, h3, v3, h4, v4) {
-             if (!isConnected) return;
-             const servos = [h1, v1, h2, v2, h3, v3, h4, v4].map(v => Math.max(0, Math.min(180, parseInt(v))));
-             const raw = new Uint8Array(servos);
-             
-             if (isConnected && characteristic) {
-                let finalPacket = slipEncode(raw);
-                try { await characteristic.writeValue(finalPacket); } catch(e) { log("TX Spider Fail: " + e.message, 'err'); }
-            }
-        }
+        
 
         async function sendDrivePacket(m1, m2, m3, m4) {
             if (!isConnected && !window.isSimulating) return;
@@ -1938,8 +1628,9 @@ const SLIP_END = 0xC0;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
             
-            ['view-joystick', 'view-builder', 'view-dual'].forEach(id => {
+            ['view-joystick', 'view-builder'].forEach(id => {
                 const el = document.getElementById(id);
+                if(!el) return;
                 el.classList.add('hidden');
                 el.classList.remove('opacity-100');
                 el.classList.add('opacity-0');
@@ -1955,9 +1646,7 @@ const SLIP_END = 0xC0;
             if(viewId === 'view-builder') toggleScratchMode(true);
             else toggleScratchMode(false);
         }
-        function startDualMode(btn) { switchView('view-dual', btn); }
-
-        function openPassModal() { document.getElementById('passModal').classList.remove('hidden'); }
+function openPassModal() { document.getElementById('passModal').classList.remove('hidden'); }
         function closePassModal() { document.getElementById('passModal').classList.add('hidden'); }
         function sendPassword() {
             const pass = document.getElementById('passInput').value;
@@ -2133,109 +1822,19 @@ function handleGyro(e) {
             motorRDisplay.innerText = currentR;
             
             let hex = "";
-            if (false) {
-                const raw = new Int8Array([currentL, currentR, currentL, currentR]);
-                const uintView = new Uint8Array(raw.buffer); 
-                for(let b of uintView) hex += b.toString(16).toUpperCase().padStart(2,'0') + " ";
-            } else {
-                const raw = new Int8Array([currentL, currentR, 0, 0]);
-                const uintView = new Uint8Array(raw.buffer); 
-                for(let b of uintView) hex += b.toString(16).toUpperCase().padStart(2,'0') + " ";
-            }
-            joyHex.innerText = hex;
+const raw = new Int8Array([currentL, currentR]);
+const uintView = new Uint8Array(raw.buffer);
+for (let b of uintView) hex += b.toString(16).toUpperCase().padStart(2, '0') + " ";
+joyHex.innerText = hex;
         }
 
         base.addEventListener('mousedown', startJoy); base.addEventListener('touchstart', startJoy);
         window.addEventListener('mouseup', endJoy); window.addEventListener('touchend', endJoy);
         window.addEventListener('mousemove', moveJoy); window.addEventListener('touchmove', moveJoy, {passive:false});
-
-        const quadState = { m1:0, m2:0, m3:0, m4:0 };
-        
-        function initQuadJoystick(id) {
-            const base = document.getElementById(`joy${id}-base`);
-            const stick = document.getElementById(`joy${id}-stick`);
-            if(!base || !stick) return;
-            
-            const maxDist = 42; 
-            let activeTouchId = null;
-
-            function update(cx, cy) {
-                const rect = base.getBoundingClientRect();
-                const dy = cy - (rect.top + rect.height/2);
-                
-                let my = dy;
-                if(my > maxDist) my = maxDist;
-                if(my < -maxDist) my = -maxDist;
-                
-                stick.style.transform = `translate(-50%, -50%) translate(0px, ${my}px)`;
-                
-                let speed = Math.round((my/maxDist)*100) * -1; 
-                quadState[`m${id}`] = speed;
-            }
-
-            function reset() {
-                stick.classList.add('snap');
-                stick.style.transform = `translate(-50%, -50%)`;
-                quadState[`m${id}`] = 0;
-            }
-
-            base.addEventListener('mousedown', (e) => {
-                stick.classList.remove('snap'); update(e.clientX, e.clientY);
-                const mm = (ev) => update(ev.clientX, ev.clientY);
-                const mu = () => { window.removeEventListener('mousemove', mm); window.removeEventListener('mouseup', mu); reset(); };
-                window.addEventListener('mousemove', mm); window.addEventListener('mouseup', mu);
-            });
-
-            base.addEventListener('touchstart', (e) => { 
-                e.preventDefault(); 
-                stick.classList.remove('snap'); 
-                activeTouchId = e.changedTouches[0].identifier; 
-                update(e.changedTouches[0].clientX, e.changedTouches[0].clientY); 
-            });
-            base.addEventListener('touchmove', (e) => { 
-                e.preventDefault(); 
-                for(let i=0; i<e.changedTouches.length; i++) { 
-                    if(e.changedTouches[i].identifier === activeTouchId) { 
-                        update(e.changedTouches[i].clientX, e.changedTouches[i].clientY); 
-                        break; 
-                    } 
-                } 
-            });
-            base.addEventListener('touchend', (e) => { 
-                e.preventDefault(); 
-                for(let i=0; i<e.changedTouches.length; i++) { 
-                    if(e.changedTouches[i].identifier === activeTouchId) { 
-                        activeTouchId = null; 
-                        reset(); 
-                        break; 
-                    } 
-                } 
-            });
-        }
-
-        setTimeout(() => { 
-            initQuadJoystick(1); 
-            initQuadJoystick(2); 
-            initQuadJoystick(3); 
-            initQuadJoystick(4); 
-        }, 500);
-
-        setInterval(() => {
-            if(activeView === 'view-dual') {
-                const packet = new Int8Array([quadState.m1, quadState.m2, quadState.m3, quadState.m4]); 
-                let hexStr = "";
-                const uintView = new Uint8Array(packet.buffer);
-                for(let b of uintView) hexStr += b.toString(16).toUpperCase().padStart(2, '0') + " ";
-                document.getElementById('quadPacketHex').innerText = hexStr;
-                
-                if(isConnected) sendRawPacket(packet);
-            }
-        }, 100);
-
-        const CustomTheme = Blockly.Theme.defineTheme('myTheme', {
+const CustomTheme = Blockly.Theme.defineTheme('myTheme', {
             'base': Blockly.Themes.Classic,
             'componentStyles': {
-                'workspaceBackgroundColour': '#0f172a', 'toolboxBackgroundColour': THEME_CONFIG.menuBg, 'toolboxForegroundColour': THEME_CONFIG.menuText, 'flyoutBackgroundColour': THEME_CONFIG.flyoutBg, 'flyoutForegroundColour': THEME_CONFIG.menuText, 'flyoutOpacity': THEME_CONFIG.flyoutOpacity, 'scrollbarColour': '#334155', 'insertionMarkerColour': '#fff', 'insertionMarkerOpacity': 0.3
+                'workspaceBackgroundColour': 'transparent', 'toolboxBackgroundColour': THEME_CONFIG.menuBg, 'toolboxForegroundColour': THEME_CONFIG.menuText, 'flyoutBackgroundColour': THEME_CONFIG.flyoutBg, 'flyoutForegroundColour': THEME_CONFIG.menuText, 'flyoutOpacity': THEME_CONFIG.flyoutOpacity, 'scrollbarColour': '#334155', 'insertionMarkerColour': '#fff', 'insertionMarkerOpacity': 0.3
             }
         });
 
@@ -2302,6 +1901,35 @@ let _isMobile = null;
             }
         }
 
+        function rcSetBlockMinWidth(ws, px) {
+            try {
+                const renderer = ws && ws.getRenderer ? ws.getRenderer() : null;
+                const constants = renderer && renderer.getConstants ? renderer.getConstants() : null;
+
+                if (constants && typeof constants.MIN_BLOCK_WIDTH !== 'undefined') {
+                    constants.MIN_BLOCK_WIDTH = px;
+                }
+
+                // Fallback for some Blockly builds
+                if (window.Blockly && Blockly.blockRendering && Blockly.blockRendering.ConstantProvider && Blockly.blockRendering.ConstantProvider.prototype) {
+                    if (typeof Blockly.blockRendering.ConstantProvider.prototype.MIN_BLOCK_WIDTH !== 'undefined') {
+                        Blockly.blockRendering.ConstantProvider.prototype.MIN_BLOCK_WIDTH = px;
+                    }
+                }
+
+                // Re-render blocks so changes are visible immediately
+                if (ws && ws.getAllBlocks) {
+                    ws.getAllBlocks(false).forEach(b => { try { b.render(false); } catch(e) {} });
+                }
+                const fly = ws && ws.getFlyout ? ws.getFlyout() : null;
+                const fw = fly && fly.getWorkspace ? fly.getWorkspace() : null;
+                if (fw && fw.getAllBlocks) {
+                    fw.getAllBlocks(false).forEach(b => { try { b.render(false); } catch(e) {} });
+                }
+                if (fly && fly.reflow) fly.reflow();
+            } catch (e) {}
+        }
+
         function makeWorkspace(mobile) {
             const dom = workspace ? Blockly.Xml.workspaceToDom(workspace) : null;
             const prevScale = workspace ? workspace.getScale() : 0.75;
@@ -2319,13 +1947,14 @@ let _isMobile = null;
                 horizontalLayout: mobile,
                 toolboxPosition: mobile ? 'end' : 'start',
 
-                grid: { spacing: 40, length: 2, colour: '#334155', snap: true },
+                grid: { spacing: 40, length: 2, colour: 'rgba(255,255,255,0.12)', snap: true },
                 zoom: { controls: false, wheel: true, startScale: prevScale, maxScale: (mobile ? prevScale : prevScale * 1.2), minScale: Math.max(0.25, prevScale * 0.5), scaleSpeed: 1.2, pinch: true },
                 trashcan: false,
                 move: { scrollbars: true, drag: true, wheel: false }
             });
 
             if (dom) Blockly.Xml.domToWorkspace(dom, workspace);
+            rcSetBlockMinWidth(workspace, 200);
 
             const style = document.createElement('style');
             style.innerHTML = `.blocklyToolboxDiv { background-color: ${THEME_CONFIG.menuBg} !important; }
@@ -2335,9 +1964,8 @@ let _isMobile = null;
             document.head.appendChild(style);
 
             lockFlyoutScale(workspace);
-            workspace.addChangeListener((e) => {
-                if (e.type === Blockly.Events.VIEWPORT_CHANGE) lockFlyoutScale(workspace);
-            });
+            // Keep flyout scale locked (prevents toolbox zoom glitches)
+            workspace.addChangeListener(() => lockFlyoutScale(workspace));
 
             window.workspace = workspace;
 
@@ -2364,42 +1992,8 @@ function checkStop() {
             return `if (typeof window._shouldStop !== 'undefined' && window._shouldStop) { throw "STOPPED"; }\n`;
         }
 
-let __rcValidateTimer = null;
-function scheduleValidateWorkspace() {
-    clearTimeout(__rcValidateTimer);
-    __rcValidateTimer = setTimeout(() => {
-        try { validateWorkspace(); } catch (e) {  }
-    }, 60);
-}
 
-workspace.addChangeListener(function(event) {
-    if (event.type === Blockly.Events.BLOCK_MOVE ||
-        event.type === Blockly.Events.BLOCK_CREATE ||
-        event.type === Blockly.Events.FINISHED_LOADING) {
-        scheduleValidateWorkspace();
-    }
-});
-
-function validateWorkspace() {
-    if (!workspace) return;
-    const allBlocks = workspace.getAllBlocks(false) || [];
-    const hasSpiderBlocks = allBlocks.some(b => b && typeof b.type === "string" && b.type.startsWith('spider_'));
-
-    for (const b of allBlocks) {
-        if (!b || typeof b.type !== "string") continue;
-
-        const isCarBlock = b.type.startsWith('robot_') || b.type === 'move_4_motors' || b.type === 'motor_single';
-        const root = (b.getSvgRoot && b.getSvgRoot()) || null;
-
-        if (hasSpiderBlocks && isCarBlock) {
-            if (root) root.classList.add('blockly-error-glow');
-            b.setWarningText("⚠️ НЕСУМІСНІСТЬ: Не можна змішувати блоки Павука та Машинки!");
-        } else {
-            if (root) root.classList.remove('blockly-error-glow');
-            b.setWarningText(null);
-        }
-    }
-}
+        // (workspace validation removed - was causing parse errors)
 
         let moveHistory = [];
         let isCodeRunning = false;
@@ -2470,18 +2064,13 @@ function validateWorkspace() {
         window.stopCode = function() { 
             window._shouldStop = true; isCodeRunning = false; window._isRecordingTrack = false;
             sendDrivePacket(0,0,0,0);
-            sendSpiderPacket(90,90,90,90,90,90,90,90);
-            const btn = document.getElementById('globalRunBtn'); const icon = document.getElementById('runIcon');
+const btn = document.getElementById('globalRunBtn'); const icon = document.getElementById('runIcon');
             btn.classList.remove('running'); icon.classList.remove('fa-stop'); icon.classList.add('fa-play');
         };
 
         function loadExample(type) {
 
-             if(type === 'spider_demo') {
-                 workspace.clear();
-                 Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom('<xml xmlns="https://developers.google.com/blockly/xml"><block type="spider_center" x="50" y="50"><next><block type="spider_config"><value name="HEIGHT"><shadow type="math_number"><field name="NUM">40</field></shadow></value><value name="SPEED"><shadow type="math_number"><field name="NUM">80</field></shadow></value><next><block type="spider_anim"><field name="ANIM">WAVE</field><next><block type="spider_walk_time"><field name="DIR">FWD</field><value name="SEC"><shadow type="math_number"><field name="NUM">3</field></shadow></value><next><block type="spider_anim"><field name="ANIM">SIT</field></block></next></block></next></block></next></block></next></block>'), workspace);
-                 document.getElementById('exampleModal').classList.add('hidden');
-             } else {
+             {
                  const xmlAutopilot = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="start_hat" id="start" x="50" y="50"><next><block type="controls_whileUntil" id="loop"><field name="MODE">WHILE</field><value name="BOOL"><block type="logic_boolean"><field name="BOOL">TRUE</field></block></value><statement name="DO"><block type="controls_if"><mutation else="1"></mutation><value name="IF0"><block type="wait_until_sensor"><field name="SENS">0</field><field name="OP">LT</field><value name="VAL"><shadow type="math_number"><field name="NUM">25</field></shadow></value></block></value><statement name="DO0"><block type="robot_stop"><next><block type="robot_turn_timed"><field name="DIR">RIGHT</field><value name="SEC"><shadow type="math_number"><field name="NUM">0.5</field></shadow></value></block></next></block></statement><statement name="ELSE"><block type="robot_move"><value name="L"><shadow type="math_number"><field name="NUM">80</field></shadow></value><value name="R"><shadow type="math_number"><field name="NUM">80</field></shadow></value></block></statement></block></statement></block></next></block></xml>';
                  const xmlSquare = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="start_hat" id="start" x="50" y="50"><next><block type="controls_repeat_ext"><value name="TIMES"><shadow type="math_number"><field name="NUM">4</field></shadow></value><statement name="DO"><block type="robot_move"><value name="L"><shadow type="math_number"><field name="NUM">100</field></shadow></value><value name="R"><shadow type="math_number"><field name="NUM">100</field></shadow></value><next><block type="wait_seconds"><value name="SECONDS"><shadow type="math_number"><field name="NUM">1</field></shadow></value><next><block type="robot_turn_timed"><field name="DIR">RIGHT</field><value name="SEC"><shadow type="math_number"><field name="NUM">0.6</field></shadow></value></block></next></block></next></block></statement><next><block type="robot_stop"></block></next></block></next></block></xml>';
                  const xmlLine = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="start_hat" x="50" y="50"><next><block type="controls_whileUntil"><field name="MODE">WHILE</field><value name="BOOL"><block type="logic_boolean"><field name="BOOL">TRUE</field></block></value><statement name="DO"><block type="controls_if"><mutation else="1"></mutation><value name="IF0"><block type="logic_compare"><field name="OP">LT</field><value name="A"><block type="sensor_get"><field name="TYPE">LIGHT</field><field name="SENS">1</field></block></value><value name="B"><block type="math_number"><field name="NUM">50</field></block></value></block></value><statement name="DO0"><block type="robot_move"><value name="L"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="R"><shadow type="math_number"><field name="NUM">80</field></shadow></value></block></statement><statement name="ELSE"><block type="robot_move"><value name="L"><shadow type="math_number"><field name="NUM">80</field></shadow></value><value name="R"><shadow type="math_number"><field name="NUM">30</field></shadow></value></block></statement></block></statement></block></next></block></xml>';
@@ -2544,8 +2133,7 @@ function validateWorkspace() {
         window.sendCarPacket = sendCarPacket;
     </script>
      <script src="blocks_car_fixed3.js"></script>
-    <script src="blocks_spider.js"></script>
-  <script src="help.js"></script>
+<script src="help.js"></script>
 <script>
 (function(){
   "use strict";
@@ -2571,7 +2159,6 @@ function validateWorkspace() {
         this.lastStopAt = t;
 
         if (typeof window.sendDrivePacket === "function") window.sendDrivePacket(0,0,0,0);
-        if (typeof window.sendSpiderPacket === "function") window.sendSpiderPacket(90,90,90,90,90,90,90,90);
         if (typeof window.log === "function") window.log("SAFETY STOP" + (reason ? (": " + reason) : ""), "err");
       } catch(e){}
     },
