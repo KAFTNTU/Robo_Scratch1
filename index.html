@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -1901,35 +1899,6 @@ let _isMobile = null;
             }
         }
 
-        function rcSetBlockMinWidth(ws, px) {
-            try {
-                const renderer = ws && ws.getRenderer ? ws.getRenderer() : null;
-                const constants = renderer && renderer.getConstants ? renderer.getConstants() : null;
-
-                if (constants && typeof constants.MIN_BLOCK_WIDTH !== 'undefined') {
-                    constants.MIN_BLOCK_WIDTH = px;
-                }
-
-                // Fallback for some Blockly builds
-                if (window.Blockly && Blockly.blockRendering && Blockly.blockRendering.ConstantProvider && Blockly.blockRendering.ConstantProvider.prototype) {
-                    if (typeof Blockly.blockRendering.ConstantProvider.prototype.MIN_BLOCK_WIDTH !== 'undefined') {
-                        Blockly.blockRendering.ConstantProvider.prototype.MIN_BLOCK_WIDTH = px;
-                    }
-                }
-
-                // Re-render blocks so changes are visible immediately
-                if (ws && ws.getAllBlocks) {
-                    ws.getAllBlocks(false).forEach(b => { try { b.render(false); } catch(e) {} });
-                }
-                const fly = ws && ws.getFlyout ? ws.getFlyout() : null;
-                const fw = fly && fly.getWorkspace ? fly.getWorkspace() : null;
-                if (fw && fw.getAllBlocks) {
-                    fw.getAllBlocks(false).forEach(b => { try { b.render(false); } catch(e) {} });
-                }
-                if (fly && fly.reflow) fly.reflow();
-            } catch (e) {}
-        }
-
         function makeWorkspace(mobile) {
             const dom = workspace ? Blockly.Xml.workspaceToDom(workspace) : null;
             const prevScale = workspace ? workspace.getScale() : 0.75;
@@ -1954,7 +1923,6 @@ let _isMobile = null;
             });
 
             if (dom) Blockly.Xml.domToWorkspace(dom, workspace);
-            rcSetBlockMinWidth(workspace, 200);
 
             const style = document.createElement('style');
             style.innerHTML = `.blocklyToolboxDiv { background-color: ${THEME_CONFIG.menuBg} !important; }
@@ -1964,8 +1932,21 @@ let _isMobile = null;
             document.head.appendChild(style);
 
             lockFlyoutScale(workspace);
-            // Keep flyout scale locked (prevents toolbox zoom glitches)
-            workspace.addChangeListener(() => lockFlyoutScale(workspace));
+            
+            // Фікс проблеми з гігантськими блоками при відкритті категорії
+            workspace.addChangeListener((e) => {
+                lockFlyoutScale(workspace);
+                if (e.type === Blockly.Events.TOOLBOX_ITEM_SELECT || e.type === 'toolbox_item_select') {
+                    setTimeout(() => {
+                        const flyout = workspace.getFlyout();
+                        if (flyout && flyout.isVisible()) {
+                            const fw = flyout.getWorkspace();
+                            if (fw) fw.setScale(1);
+                            flyout.reflow();
+                        }
+                    }, 15); 
+                }
+            });
 
             window.workspace = workspace;
 
@@ -2257,9 +2238,9 @@ function ensureLogExportButton(){
 
 })();
 </script>
-  <script src="https://unpkg.com/three@0.155.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.155.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://unpkg.com/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="rc_sim2d_3d_overlay.js"></script>
   <script src="rc_sim2d_online.js"></script>
   <script src="rc_sim2d_core.js"></script>
