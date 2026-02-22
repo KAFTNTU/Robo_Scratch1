@@ -1048,6 +1048,47 @@ select, option{
                 </button>
             </div>
 <div id="blocklyDiv" class="flex-1 mt-0"></div>
+        <!-- Кастомний скролбар для flyout на мобільному -->
+        <div id="flyoutScrollbarWrap" style="
+            display: none;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 140px;
+            width: 70%;
+            max-width: 340px;
+            height: 28px;
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            padding: 0 6px;
+        ">
+            <div id="flyoutScrollTrack" style="
+                position: relative;
+                width: 100%;
+                height: 6px;
+                background: rgba(255,255,255,0.12);
+                border-radius: 99px;
+                overflow: visible;
+                cursor: pointer;
+            ">
+                <div id="flyoutScrollThumb" style="
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    height: 6px;
+                    min-width: 32px;
+                    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+                    border-radius: 99px;
+                    box-shadow: 0 0 8px rgba(96,165,250,0.5);
+                    left: 0;
+                    width: 40%;
+                    transition: opacity 0.2s;
+                    touch-action: none;
+                    cursor: grab;
+                "></div>
+            </div>
+        </div>
         </section>
 
         <section id="view-dual" class="absolute inset-0 hidden opacity-0 flex flex-col items-center justify-center bg-slate-950">
@@ -2019,7 +2060,7 @@ if (window.Blockly) {
                 .appendField("  P4:")
                 .appendField("0", "P4");
 
-            this.setColour(50);
+            this.setColour("#B36C0C");
 
             this.setDeletable(true);
             this.setMovable(true);
@@ -2107,7 +2148,133 @@ let _isMobile = null;
             if (!window.__rcSensorDispTimer) {
                 window.__rcSensorDispTimer = setInterval(rcUpdateSensorDisplayBlocks, 200);
             }
+
+            // Кастомний скролбар для flyout на мобільному
+            if (mobile) {
+                setTimeout(() => setupFlyoutScrollbar(workspace), 300);
+            } else {
+                const wrap = document.getElementById('flyoutScrollbarWrap');
+                if (wrap) wrap.style.display = 'none';
+            }
         }
+
+        // ── Flyout scrollbar ──────────────────────────────────────────
+        let _flyoutScrollSetup = false;
+        function setupFlyoutScrollbar(ws) {
+            const wrap  = document.getElementById('flyoutScrollbarWrap');
+            const track = document.getElementById('flyoutScrollTrack');
+            const thumb = document.getElementById('flyoutScrollThumb');
+            if (!wrap || !track || !thumb) return;
+
+            let _hideTimer = null;
+            function showBar() {
+                wrap.style.display = 'flex';
+                wrap.style.opacity = '1';
+                clearTimeout(_hideTimer);
+                _hideTimer = setTimeout(() => { wrap.style.opacity = '0'; }, 2200);
+            }
+            function hideBar() { wrap.style.opacity = '0'; }
+
+            function getFlyoutData() {
+                const flyout = ws.getFlyout && ws.getFlyout();
+                if (!flyout || !flyout.isVisible()) return null;
+                const fw = flyout.getWorkspace && flyout.getWorkspace();
+                if (!fw) return null;
+                // в horizontal layout блоки йдуть по X
+                const metrics = fw.getMetrics && fw.getMetrics();
+                if (!metrics) return null;
+                return { flyout, fw, metrics };
+            }
+
+            function updateThumb() {
+                const d = getFlyoutData();
+                if (!d) { hideBar(); return; }
+                const { metrics } = d;
+                const contentW = metrics.scrollWidth || metrics.contentWidth || 0;
+                const viewW    = metrics.viewWidth || 0;
+                if (contentW <= viewW) { hideBar(); return; }
+
+                const scrollLeft = -(metrics.scrollLeft || metrics.viewLeft - (metrics.contentLeft || 0));
+                const trackW = track.offsetWidth;
+                const ratio  = viewW / contentW;
+                const thumbW = Math.max(32, trackW * ratio);
+                const maxScroll = contentW - viewW;
+                const progress = Math.max(0, Math.min(1, scrollLeft / maxScroll));
+                const maxLeft  = trackW - thumbW;
+
+                thumb.style.width = thumbW + 'px';
+                thumb.style.left  = (progress * maxLeft) + 'px';
+                showBar();
+            }
+
+            // Слухаємо скрол flyout
+            ws.addChangeListener((e) => {
+                if (e.type === Blockly.Events.VIEWPORT_CHANGE) updateThumb();
+                if (e.type === Blockly.Events.TOOLBOX_ITEM_SELECT) {
+                    setTimeout(updateThumb, 80);
+                }
+            });
+
+            // Drag по треку — скролимо flyout
+            function getThumbDragHandler() {
+                let startX, startLeft, startScrollLeft, contentW, viewW, maxScroll, trackW, thumbW;
+                function onStart(clientX) {
+                    const d = getFlyoutData();
+                    if (!d) return;
+                    const { metrics } = d;
+                    contentW   = metrics.scrollWidth || metrics.contentWidth || 0;
+                    viewW      = metrics.viewWidth || 0;
+                    maxScroll  = contentW - viewW;
+                    startX     = clientX;
+                    trackW     = track.offsetWidth;
+                    thumbW     = thumb.offsetWidth;
+                    startLeft  = parseFloat(thumb.style.left) || 0;
+                    startScrollLeft = -(metrics.scrollLeft || metrics.viewLeft - (metrics.contentLeft || 0));
+                    thumb.style.cursor = 'grabbing';
+                }
+                function onMove(clientX) {
+                    const dx = clientX - startX;
+                    const maxLeft = trackW - thumbW;
+                    const newLeft = Math.max(0, Math.min(maxLeft, startLeft + dx));
+                    const progress = maxLeft > 0 ? newLeft / maxLeft : 0;
+                    const newScroll = progress * maxScroll;
+                    thumb.style.left = newLeft + 'px';
+                    // Скролимо Blockly flyout workspace
+                    const d = getFlyoutData();
+                    if (d) d.fw.scrollX = -newScroll;
+                    if (d) d.fw.resizeContents && d.fw.resizeContents();
+                }
+                function onEnd() { thumb.style.cursor = 'grab'; }
+                return { onStart, onMove, onEnd };
+            }
+
+            const h = getThumbDragHandler();
+            thumb.addEventListener('touchstart', e => { e.stopPropagation(); h.onStart(e.touches[0].clientX); }, {passive:true});
+            window.addEventListener('touchmove', e => { if (thumb.style.cursor === 'grabbing') h.onMove(e.touches[0].clientX); }, {passive:true});
+            window.addEventListener('touchend', () => h.onEnd());
+            thumb.addEventListener('mousedown', e => { e.stopPropagation(); h.onStart(e.clientX); });
+            window.addEventListener('mousemove', e => { if (thumb.style.cursor === 'grabbing') h.onMove(e.clientX); });
+            window.addEventListener('mouseup', () => h.onEnd());
+
+            // Клік по треку — стрибаємо
+            track.addEventListener('click', e => {
+                if (e.target === thumb) return;
+                const d = getFlyoutData();
+                if (!d) return;
+                const { metrics, fw } = d;
+                const contentW = metrics.scrollWidth || metrics.contentWidth || 0;
+                const viewW    = metrics.viewWidth || 0;
+                const maxScroll = contentW - viewW;
+                const rect = track.getBoundingClientRect();
+                const progress = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                fw.scrollX = -(progress * maxScroll);
+                fw.resizeContents && fw.resizeContents();
+                updateThumb();
+            });
+
+            updateThumb();
+        }
+        // ─────────────────────────────────────────────────────────────
 
         function applyResponsive() {
             const mobile = window.innerWidth < 900;
@@ -2291,6 +2458,45 @@ function validateWorkspace() {
         window.sendDrivePacket = sendDrivePacket;
     </script>
      <script src="blocks_car_fixed3.js"></script>
+  <script>
+  // === Патч кольорів: блоки = колір категорії ===
+  (function patchBlockColours() {
+    // 🚗 Рух → #244FA8
+    var RUH = "#244FA8";
+    ["start_hat","robot_move","robot_move_soft","robot_turn_timed","robot_set_speed",
+     "robot_stop","motor_single","move_4_motors","go_home","track_action",
+     "start_line_action","math_number_limited"].forEach(function(t) {
+      if (!Blockly.Blocks[t]) return;
+      var orig = Blockly.Blocks[t].init;
+      Blockly.Blocks[t].init = function() { orig.call(this); this.setColour(RUH); };
+    });
+
+    // Контроль → #B36C0C
+    var CTRL = "#B36C0C";
+    ["calibrate_speed_line","cooldown_do","latch_set","latch_get","latch_reset",
+     "wait_until_true_for","if_true_for","timeout_do_until","if_happened_n_times",
+     "sensor_display","wait_until_sensor","wait_seconds","timer_get","timer_reset",
+     "autopilot_distance"].forEach(function(t) {
+      if (!Blockly.Blocks[t]) return;
+      var orig = Blockly.Blocks[t].init;
+      Blockly.Blocks[t].init = function() { orig.call(this); this.setColour(CTRL); };
+    });
+
+    // 🧠 Логіка → 210 (BKY_LOGIC_HUE)
+    ["sensor_get"].forEach(function(t) {
+      if (!Blockly.Blocks[t]) return;
+      var orig = Blockly.Blocks[t].init;
+      Blockly.Blocks[t].init = function() { orig.call(this); this.setColour(210); };
+    });
+
+    // Цикли → 120 (BKY_LOOPS_HUE)
+    ["count_laps","loop_forever","loop_repeat_pause","loop_every_seconds"].forEach(function(t) {
+      if (!Blockly.Blocks[t]) return;
+      var orig = Blockly.Blocks[t].init;
+      Blockly.Blocks[t].init = function() { orig.call(this); this.setColour(120); };
+    });
+  })();
+  </script>
   <script src="help.js"></script>
 <script>
 (function(){
