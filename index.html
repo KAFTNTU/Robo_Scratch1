@@ -1935,7 +1935,7 @@ let _isMobile = null;
             
             // Фікс проблеми з гігантськими блоками при відкритті категорії
             workspace.addChangeListener((e) => {
-                lockFlyoutScale(workspace);
+                if (e.type === Blockly.Events.VIEWPORT_CHANGE) lockFlyoutScale(workspace);
                 if (e.type === Blockly.Events.TOOLBOX_ITEM_SELECT || e.type === 'toolbox_item_select') {
                     setTimeout(() => {
                         const flyout = workspace.getFlyout();
