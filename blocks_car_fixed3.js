@@ -310,6 +310,29 @@ javascript.javascriptGenerator.forBlock['replay_loop'] = function(block) {
 };
 
 
+// === ЦИКЛИ: Нескінченний цикл (loop_forever) ===
+Blockly.Blocks['loop_forever'] = {
+  init: function() {
+    this.appendDummyInput()
+      .appendField("🔁 Повторювати завжди");
+    this.appendStatementInput("DO")
+      .appendField("виконувати");
+    this.setPreviousStatement(true, null);
+    this.setColour(120);
+    this.setTooltip("Нескінченний цикл. Виконує команди всередині вічно (зупиняється кнопкою Стоп).");
+  }
+};
+
+javascript.javascriptGenerator.forBlock['loop_forever'] = function(block) {
+  const branch = javascript.javascriptGenerator.statementToCode(block, 'DO');
+  return `
+  while (true) {
+    if (typeof window._shouldStop !== 'undefined' && window._shouldStop) throw "STOPPED";
+    ${branch}
+    await new Promise(r => setTimeout(r, 10)); // Запобігає зависанню браузера
+  }
+  \n`;
+};
 
 // === ЦИКЛИ: Повторити з паузою (сек) ===
 Blockly.Blocks['loop_repeat_pause'] = {
@@ -441,6 +464,25 @@ javascript.javascriptGenerator.forBlock['count_laps'] = function(block) {
     }
     \n`;
 };
+
+
+// === Заглушки для блоків track_action та start_line_action ===
+Blockly.Blocks['track_action'] = {
+    init: function() {
+        this.appendDummyInput().appendField("🛣️ Дія на трасі");
+        this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(230);
+    }
+};
+javascript.javascriptGenerator.forBlock['track_action'] = function() { return '\n'; };
+
+Blockly.Blocks['start_line_action'] = {
+    init: function() {
+        this.appendDummyInput().appendField("🏁 Дія на старті");
+        this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(230);
+    }
+};
+javascript.javascriptGenerator.forBlock['start_line_action'] = function() { return '\n'; };
+
 
 // --- SENSORS & LOGIC ---
 
@@ -1242,4 +1284,3 @@ if (Blockly.JavaScript) {
     return statements;
   };
 }
-
