@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -140,18 +141,15 @@
             #quadLayout{ transform: translateY(var(--quad-layout-shift-mobile)); }
         }
 
-        #blocklyDiv {
-    position: absolute;
-    top: 64px;
-    left: 0;
-    right: 0;
-    bottom: 0px;
-    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-    background-color: var(--ui-glass) !important;
-    z-index: 1;
-}
-/* Make Blockly background transparent so the DIV background shows, but KEEP the grid pattern fill. */
-.blocklySvg { background-color: transparent !important; }
+        #blocklyDiv { 
+            position: absolute; 
+            top: 64px; 
+            left: 0; 
+            right: 0; 
+            bottom: 0px; 
+            background-color: #0f172a !important; 
+            z-index: 1;
+        }
         
         .blocklySvg { background-color: transparent !important; }
 
@@ -951,7 +949,7 @@ select, option{
             <button onclick="switchView('view-builder', this)" class="nav-btn" title="Scratch">
                 <i class="fa-solid fa-puzzle-piece text-lg"></i>
             </button>
-<div class="w-px h-6 bg-slate-700 mx-1"></div>
+            <div class="w-px h-6 bg-slate-700 mx-1"></div>
             <button onclick="openPassModal()" class="nav-btn text-slate-400 hover:text-slate-300" title="Пароль">
                 <i class="fa-solid fa-lock text-lg"></i>
             </button>
@@ -1012,7 +1010,7 @@ select, option{
                 </button>
 
                 <div class="bg-black/40px-3 py-1 rounded text-[10px] font-mono tracking-widest text-slate-400 border border-slate-800/50 text-center mt-2">
-                    HEX: <span id="joyHex" class="text-yellow-500 font-bold">00 00</span>
+                    HEX: <span id="joyHex" class="text-yellow-500 font-bold">00 00 00 00</span>
                 </div>
             </div>
             </div>
@@ -1051,7 +1049,55 @@ select, option{
             </div>
 <div id="blocklyDiv" class="flex-1 mt-0"></div>
         </section>
-</main>
+
+        <section id="view-dual" class="absolute inset-0 hidden opacity-0 flex flex-col items-center justify-center bg-slate-950">
+                        <div id="quadLayout" class="w-full h-full flex flex-col items-center justify-center">
+                <div class="flex items-start justify-center gap-12">
+<div class="joy-quad-wrapper">
+                    <div>
+                        <div class="joy-quad-label">M1</div>
+                        <div id="joy1-container" class="joy-quad-container">
+                            <div id="joy1-base" class="joy-quad-base">
+                                <div id="joy1-stick" class="joy-quad-stick snap"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="joy-quad-label">M3</div>
+                        <div id="joy3-container" class="joy-quad-container">
+                            <div id="joy3-base" class="joy-quad-base">
+                                <div id="joy3-stick" class="joy-quad-stick snap"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="joy-quad-wrapper">
+                    <div>
+                        <div class="joy-quad-label">M2</div>
+                        <div id="joy2-container" class="joy-quad-container">
+                            <div id="joy2-base" class="joy-quad-base">
+                                <div id="joy2-stick" class="joy-quad-stick snap"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="joy-quad-label">M4</div>
+                        <div id="joy4-container" class="joy-quad-container">
+                            <div id="joy4-base" class="joy-quad-base">
+                                <div id="joy4-stick" class="joy-quad-stick snap"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="mt-6 bg-black/80 px-6 py-2 rounded-full text-xs font-mono text-purple-400 border border-slate-700 shadow-lg z-20">
+                    HEX: <span id="quadPacketHex">--</span>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <div id="exampleModal" class="fixed inset-0 bg-black/80 z-[70] hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-slate-900 w-full max-w-sm rounded-2xl shadow-2xl border border-slate-700 p-5 overflow-y-auto max-h-[90vh]">
@@ -1103,7 +1149,23 @@ select, option{
             <h3 class="text-lg font-bold text-white mb-4 text-center">⚙️ Налаштування шасі</h3>
             
             <div class="space-y-4">
-<div class="space-y-2">
+                 <div class="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
+                    <label class="tune-check bg-transparent border-0 p-0">
+                        <span class="text-sm text-purple-300 font-bold"><i class="fa-solid fa-shield-halved mr-2"></i>SLIP Протокол</span>
+                        <input type="checkbox" id="slipCheck" class="toggle-checkbox" onchange="saveTuning()">
+                    </label>
+                </div>
+
+                <div class="bg-blue-900/20 p-3 rounded-xl border border-blue-500/30">
+                    <label class="tune-check bg-transparent border-0 p-0">
+                        <span class="text-sm text-blue-300 font-bold"><i class="fa-solid fa-truck-monster mr-2"></i>Режим 4 моторів (4WD)</span>
+                        <input type="checkbox" id="fourWdCheck" class="toggle-checkbox" onchange="saveTuning()">
+                    </label>
+                </div>
+
+
+
+                <div class="space-y-2">
                     <span class="text-xs text-slate-400 uppercase tracking-widest font-bold">Інверсія моторів</span>
                     <div class="flex gap-2">
                         <input type="checkbox" id="invLCheck" class="btn-check-input" onchange="saveTuning()">
@@ -1345,7 +1407,7 @@ select, option{
         let lastJoyX = 0;
         let lastJoyY = 0;
         
-        let tuning = {trim: 0, invertL: false, invertR: false, turnSens: 100};
+        let tuning = {trim: 0, invertL: false, invertR: false, useSlip: true, use4Motors: false, turnSens: 100};
         try {
             const saved = localStorage.getItem('roboTuning_v9');
             if(saved) tuning = { ...tuning, ...JSON.parse(saved) };
@@ -1356,8 +1418,13 @@ select, option{
             document.getElementById('trimValueDisplay').innerText = tuning.trim > 0 ? `П+${tuning.trim}` : (tuning.trim < 0 ? `Л${tuning.trim}` : '0');
         document.getElementById('invLCheck').checked = tuning.invertL;
         document.getElementById('invRCheck').checked = tuning.invertR;
-document.getElementById('turnSensSlider').value = tuning.turnSens;
+        document.getElementById('slipCheck').checked = tuning.useSlip;
+        document.getElementById('fourWdCheck').checked = tuning.use4Motors;
+        document.getElementById('turnSensSlider').value = tuning.turnSens;
         document.getElementById('turnSensDisplay').innerText = tuning.turnSens + "%";
+
+        function applyRobotModeUI() {}
+
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
 
@@ -1438,16 +1505,22 @@ document.getElementById('turnSensSlider').value = tuning.turnSens;
             tuning.trim = parseInt(document.getElementById('trimSlider').value);
             tuning.invertL = document.getElementById('invLCheck').checked;
             tuning.invertR = document.getElementById('invRCheck').checked;
+            tuning.useSlip = document.getElementById('slipCheck').checked;
+            tuning.use4Motors = document.getElementById('fourWdCheck').checked;
             tuning.turnSens = parseInt(document.getElementById('turnSensSlider').value);
-
-            try { localStorage.setItem('roboTuning_v9', JSON.stringify(tuning)); } catch(e) {}
+            
+            localStorage.setItem('roboTuning_v9', JSON.stringify(tuning));
         }
+
 
         setInterval(() => {
             if (!isConnected) return;
 
             if (activeView === 'view-joystick') {
-                sendCarPacket(currentL, currentR);
+                    let m1 = currentL, m2 = currentR;
+                    let m3 = tuning.use4Motors ? currentL : 0;
+                    let m4 = tuning.use4Motors ? currentR : 0;
+                    sendDrivePacket(m1, m2, m3, m4);
             }
         }, 100);
 const SLIP_END = 0xC0;
@@ -1508,21 +1581,6 @@ const SLIP_END = 0xC0;
 
         window.motorState = { m1:0, m2:0, m3:0, m4:0 };
 
-        // Машинка: 2 байти (L,R) завжди + SLIP
-        async function sendCarPacket(l, r) {
-            if (!isConnected && !window.isSimulating) return;
-            l = Math.max(-100, Math.min(100, parseInt(l)));
-            r = Math.max(-100, Math.min(100, parseInt(r)));
-            const raw = new Int8Array([l, r]);
-            if (isConnected && characteristic) {
-                const uintView = new Uint8Array(raw.buffer);
-                const finalPacket = slipEncode(uintView);
-                try { await characteristic.writeValue(finalPacket); } catch(e) { log("TX Car Fail: " + e.message, 'err'); }
-            }
-        }
-
-
-        
 
         async function sendDrivePacket(m1, m2, m3, m4) {
             if (!isConnected && !window.isSimulating) return;
@@ -1547,22 +1605,33 @@ const SLIP_END = 0xC0;
             const raw = new Int8Array([m1, m2, m3, m4]); 
 
             if (isConnected && characteristic) {
-                const uintView = new Uint8Array(raw.buffer);
-                    let finalPacket = slipEncode(uintView);
+                let finalPacket;
+                if (tuning.useSlip) {
+                    const uintView = new Uint8Array(raw.buffer);
+                    finalPacket = slipEncode(uintView);
+                } else {
+                    finalPacket = raw;
+                }
                 try { await characteristic.writeValue(finalPacket); } catch(e) { log("TX Fail: " + e.message, 'err'); }
             }
         }
 
         async function sendRawPacket(data) {
              if (!isConnected || !characteristic) return;
-             let finalPacket = slipEncode(new Uint8Array(data.buffer));
+             let finalPacket = data;
+             if (tuning.useSlip) {
+                 finalPacket = slipEncode(new Uint8Array(data.buffer));
+             }
              try { await characteristic.writeValue(finalPacket); } catch(e) {}
         }
 
         async function sendTextData(str) {
             if (!isConnected || !characteristic) return;
             const raw = new TextEncoder().encode(str + '\n');
-             let finalPacket = slipEncode(raw);
+             let finalPacket = raw;
+             if (tuning.useSlip) {
+                 finalPacket = slipEncode(raw);
+             }
             try { await characteristic.writeValue(finalPacket); log(`Cmd: ${str}`, 'tx'); } catch(e) { log(e, 'err'); }
         }
 
@@ -1590,7 +1659,13 @@ const SLIP_END = 0xC0;
                     characteristic.addEventListener('characteristicvaluechanged', (e) => {
                         const rawData = new Uint8Array(e.target.value.buffer);
                         
-                        for(let i=0; i<rawData.length; i++) { processSlipData(rawData[i]); }
+                        if (tuning.useSlip) {
+                            for(let i=0; i<rawData.length; i++) {
+                                processSlipData(rawData[i]);
+                            }
+                        } else {
+                             handlePacket(Array.from(rawData));
+                        }
                     });
                 } catch(e){}
 
@@ -1626,9 +1701,8 @@ const SLIP_END = 0xC0;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
             
-            ['view-joystick', 'view-builder'].forEach(id => {
+            ['view-joystick', 'view-builder', 'view-dual'].forEach(id => {
                 const el = document.getElementById(id);
-                if(!el) return;
                 el.classList.add('hidden');
                 el.classList.remove('opacity-100');
                 el.classList.add('opacity-0');
@@ -1644,7 +1718,9 @@ const SLIP_END = 0xC0;
             if(viewId === 'view-builder') toggleScratchMode(true);
             else toggleScratchMode(false);
         }
-function openPassModal() { document.getElementById('passModal').classList.remove('hidden'); }
+        function startDualMode(btn) { switchView('view-dual', btn); }
+
+        function openPassModal() { document.getElementById('passModal').classList.remove('hidden'); }
         function closePassModal() { document.getElementById('passModal').classList.add('hidden'); }
         function sendPassword() {
             const pass = document.getElementById('passInput').value;
@@ -1820,19 +1896,109 @@ function handleGyro(e) {
             motorRDisplay.innerText = currentR;
             
             let hex = "";
-const raw = new Int8Array([currentL, currentR]);
-const uintView = new Uint8Array(raw.buffer);
-for (let b of uintView) hex += b.toString(16).toUpperCase().padStart(2, '0') + " ";
-joyHex.innerText = hex;
+            if (tuning.use4Motors) {
+                const raw = new Int8Array([currentL, currentR, currentL, currentR]);
+                const uintView = new Uint8Array(raw.buffer); 
+                for(let b of uintView) hex += b.toString(16).toUpperCase().padStart(2,'0') + " ";
+            } else {
+                const raw = new Int8Array([currentL, currentR, 0, 0]);
+                const uintView = new Uint8Array(raw.buffer); 
+                for(let b of uintView) hex += b.toString(16).toUpperCase().padStart(2,'0') + " ";
+            }
+            joyHex.innerText = hex;
         }
 
         base.addEventListener('mousedown', startJoy); base.addEventListener('touchstart', startJoy);
         window.addEventListener('mouseup', endJoy); window.addEventListener('touchend', endJoy);
         window.addEventListener('mousemove', moveJoy); window.addEventListener('touchmove', moveJoy, {passive:false});
-const CustomTheme = Blockly.Theme.defineTheme('myTheme', {
+
+        const quadState = { m1:0, m2:0, m3:0, m4:0 };
+        
+        function initQuadJoystick(id) {
+            const base = document.getElementById(`joy${id}-base`);
+            const stick = document.getElementById(`joy${id}-stick`);
+            if(!base || !stick) return;
+            
+            const maxDist = 42; 
+            let activeTouchId = null;
+
+            function update(cx, cy) {
+                const rect = base.getBoundingClientRect();
+                const dy = cy - (rect.top + rect.height/2);
+                
+                let my = dy;
+                if(my > maxDist) my = maxDist;
+                if(my < -maxDist) my = -maxDist;
+                
+                stick.style.transform = `translate(-50%, -50%) translate(0px, ${my}px)`;
+                
+                let speed = Math.round((my/maxDist)*100) * -1; 
+                quadState[`m${id}`] = speed;
+            }
+
+            function reset() {
+                stick.classList.add('snap');
+                stick.style.transform = `translate(-50%, -50%)`;
+                quadState[`m${id}`] = 0;
+            }
+
+            base.addEventListener('mousedown', (e) => {
+                stick.classList.remove('snap'); update(e.clientX, e.clientY);
+                const mm = (ev) => update(ev.clientX, ev.clientY);
+                const mu = () => { window.removeEventListener('mousemove', mm); window.removeEventListener('mouseup', mu); reset(); };
+                window.addEventListener('mousemove', mm); window.addEventListener('mouseup', mu);
+            });
+
+            base.addEventListener('touchstart', (e) => { 
+                e.preventDefault(); 
+                stick.classList.remove('snap'); 
+                activeTouchId = e.changedTouches[0].identifier; 
+                update(e.changedTouches[0].clientX, e.changedTouches[0].clientY); 
+            });
+            base.addEventListener('touchmove', (e) => { 
+                e.preventDefault(); 
+                for(let i=0; i<e.changedTouches.length; i++) { 
+                    if(e.changedTouches[i].identifier === activeTouchId) { 
+                        update(e.changedTouches[i].clientX, e.changedTouches[i].clientY); 
+                        break; 
+                    } 
+                } 
+            });
+            base.addEventListener('touchend', (e) => { 
+                e.preventDefault(); 
+                for(let i=0; i<e.changedTouches.length; i++) { 
+                    if(e.changedTouches[i].identifier === activeTouchId) { 
+                        activeTouchId = null; 
+                        reset(); 
+                        break; 
+                    } 
+                } 
+            });
+        }
+
+        setTimeout(() => { 
+            initQuadJoystick(1); 
+            initQuadJoystick(2); 
+            initQuadJoystick(3); 
+            initQuadJoystick(4); 
+        }, 500);
+
+        setInterval(() => {
+            if(activeView === 'view-dual') {
+                const packet = new Int8Array([quadState.m1, quadState.m2, quadState.m3, quadState.m4]); 
+                let hexStr = "";
+                const uintView = new Uint8Array(packet.buffer);
+                for(let b of uintView) hexStr += b.toString(16).toUpperCase().padStart(2, '0') + " ";
+                document.getElementById('quadPacketHex').innerText = hexStr;
+                
+                if(isConnected) sendRawPacket(packet);
+            }
+        }, 100);
+
+        const CustomTheme = Blockly.Theme.defineTheme('myTheme', {
             'base': Blockly.Themes.Classic,
             'componentStyles': {
-                'workspaceBackgroundColour': 'transparent', 'toolboxBackgroundColour': THEME_CONFIG.menuBg, 'toolboxForegroundColour': THEME_CONFIG.menuText, 'flyoutBackgroundColour': THEME_CONFIG.flyoutBg, 'flyoutForegroundColour': THEME_CONFIG.menuText, 'flyoutOpacity': THEME_CONFIG.flyoutOpacity, 'scrollbarColour': '#334155', 'insertionMarkerColour': '#fff', 'insertionMarkerOpacity': 0.3
+                'workspaceBackgroundColour': '#0f172a', 'toolboxBackgroundColour': THEME_CONFIG.menuBg, 'toolboxForegroundColour': THEME_CONFIG.menuText, 'flyoutBackgroundColour': THEME_CONFIG.flyoutBg, 'flyoutForegroundColour': THEME_CONFIG.menuText, 'flyoutOpacity': THEME_CONFIG.flyoutOpacity, 'scrollbarColour': '#334155', 'insertionMarkerColour': '#fff', 'insertionMarkerOpacity': 0.3
             }
         });
 
@@ -1916,7 +2082,7 @@ let _isMobile = null;
                 horizontalLayout: mobile,
                 toolboxPosition: mobile ? 'end' : 'start',
 
-                grid: { spacing: 40, length: 2, colour: 'rgba(255,255,255,0.12)', snap: true },
+                grid: { spacing: 40, length: 2, colour: '#334155', snap: true },
                 zoom: { controls: false, wheel: true, startScale: prevScale, maxScale: (mobile ? prevScale : prevScale * 1.2), minScale: Math.max(0.25, prevScale * 0.5), scaleSpeed: 1.2, pinch: true },
                 trashcan: false,
                 move: { scrollbars: true, drag: true, wheel: false }
@@ -1932,20 +2098,8 @@ let _isMobile = null;
             document.head.appendChild(style);
 
             lockFlyoutScale(workspace);
-            
-            // Фікс проблеми з гігантськими блоками при відкритті категорії
             workspace.addChangeListener((e) => {
                 if (e.type === Blockly.Events.VIEWPORT_CHANGE) lockFlyoutScale(workspace);
-                if (e.type === Blockly.Events.TOOLBOX_ITEM_SELECT || e.type === 'toolbox_item_select') {
-                    setTimeout(() => {
-                        const flyout = workspace.getFlyout();
-                        if (flyout && flyout.isVisible()) {
-                            const fw = flyout.getWorkspace();
-                            if (fw) fw.setScale(1);
-                            flyout.reflow();
-                        }
-                    }, 15); 
-                }
             });
 
             window.workspace = workspace;
@@ -1973,8 +2127,33 @@ function checkStop() {
             return `if (typeof window._shouldStop !== 'undefined' && window._shouldStop) { throw "STOPPED"; }\n`;
         }
 
+let __rcValidateTimer = null;
+function scheduleValidateWorkspace() {
+    clearTimeout(__rcValidateTimer);
+    __rcValidateTimer = setTimeout(() => {
+        try { validateWorkspace(); } catch (e) {  }
+    }, 60);
+}
 
-        // (workspace validation removed - was causing parse errors)
+workspace.addChangeListener(function(event) {
+    if (event.type === Blockly.Events.BLOCK_MOVE ||
+        event.type === Blockly.Events.BLOCK_CREATE ||
+        event.type === Blockly.Events.FINISHED_LOADING) {
+        scheduleValidateWorkspace();
+    }
+});
+
+function validateWorkspace() {
+    if (!workspace) return;
+    const allBlocks = workspace.getAllBlocks(false) || [];
+
+    for (const b of allBlocks) {
+        if (!b || typeof b.type !== "string") continue;
+        const root = (b.getSvgRoot && b.getSvgRoot()) || null;
+        if (root) root.classList.remove('blockly-error-glow');
+        b.setWarningText(null);
+    }
+}
 
         let moveHistory = [];
         let isCodeRunning = false;
@@ -2045,12 +2224,11 @@ function checkStop() {
         window.stopCode = function() { 
             window._shouldStop = true; isCodeRunning = false; window._isRecordingTrack = false;
             sendDrivePacket(0,0,0,0);
-const btn = document.getElementById('globalRunBtn'); const icon = document.getElementById('runIcon');
+            const btn = document.getElementById('globalRunBtn'); const icon = document.getElementById('runIcon');
             btn.classList.remove('running'); icon.classList.remove('fa-stop'); icon.classList.add('fa-play');
         };
 
         function loadExample(type) {
-
              {
                  const xmlAutopilot = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="start_hat" id="start" x="50" y="50"><next><block type="controls_whileUntil" id="loop"><field name="MODE">WHILE</field><value name="BOOL"><block type="logic_boolean"><field name="BOOL">TRUE</field></block></value><statement name="DO"><block type="controls_if"><mutation else="1"></mutation><value name="IF0"><block type="wait_until_sensor"><field name="SENS">0</field><field name="OP">LT</field><value name="VAL"><shadow type="math_number"><field name="NUM">25</field></shadow></value></block></value><statement name="DO0"><block type="robot_stop"><next><block type="robot_turn_timed"><field name="DIR">RIGHT</field><value name="SEC"><shadow type="math_number"><field name="NUM">0.5</field></shadow></value></block></next></block></statement><statement name="ELSE"><block type="robot_move"><value name="L"><shadow type="math_number"><field name="NUM">80</field></shadow></value><value name="R"><shadow type="math_number"><field name="NUM">80</field></shadow></value></block></statement></block></statement></block></next></block></xml>';
                  const xmlSquare = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="start_hat" id="start" x="50" y="50"><next><block type="controls_repeat_ext"><value name="TIMES"><shadow type="math_number"><field name="NUM">4</field></shadow></value><statement name="DO"><block type="robot_move"><value name="L"><shadow type="math_number"><field name="NUM">100</field></shadow></value><value name="R"><shadow type="math_number"><field name="NUM">100</field></shadow></value><next><block type="wait_seconds"><value name="SECONDS"><shadow type="math_number"><field name="NUM">1</field></shadow></value><next><block type="robot_turn_timed"><field name="DIR">RIGHT</field><value name="SEC"><shadow type="math_number"><field name="NUM">0.6</field></shadow></value></block></next></block></next></block></statement><next><block type="robot_stop"></block></next></block></next></block></xml>';
@@ -2111,10 +2289,9 @@ const btn = document.getElementById('globalRunBtn'); const icon = document.getEl
         
         setTimeout(() => { if (workspace) { workspace.createVariable('x'); } }, 1000);
         window.sendDrivePacket = sendDrivePacket;
-        window.sendCarPacket = sendCarPacket;
     </script>
      <script src="blocks_car_fixed3.js"></script>
-<script src="help.js"></script>
+  <script src="help.js"></script>
 <script>
 (function(){
   "use strict";
@@ -2238,9 +2415,9 @@ function ensureLogExportButton(){
 
 })();
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.155.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.155.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="rc_sim2d_3d_overlay.js"></script>
   <script src="rc_sim2d_online.js"></script>
   <script src="rc_sim2d_core.js"></script>
